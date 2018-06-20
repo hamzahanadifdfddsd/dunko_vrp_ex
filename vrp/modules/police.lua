@@ -122,6 +122,37 @@ local function ch_delete_police_records(player,choice)
   end)
 end
 
+-- show Warning records by registration
+local function ch_show_Warning_records(player,choice)
+  vRP.prompt(player,lang.police.pc.searchreg.prompt(),"",function(player, reg)
+    vRP.getUserByRegistration(reg, function(user_id)
+      if user_id ~= nil then
+        vRP.getUData(user_id, "vRP:Warning_records", function(content)
+          vRPclient.setDiv(player,{"police_pc",".div_police_pc{ background-color: rgba(0,0,0,0.75); color: white; font-weight: bold; width: 500px; padding: 10px; margin: auto; margin-top: 150px; }",content})
+        end)
+      else
+        vRPclient.notify(player,{lang.common.not_found()})
+      end
+    end)
+  end)
+end
+
+
+-- show Warning records by ID
+local function ch_show_Warning_recordsID(player,choice)
+  vRP.prompt(player,"Enter userID","",function(player, user_id)
+    --vRP.getUserByRegistration(reg, function(user_id)
+      if user_id ~= nil then
+        vRP.getUData(user_id, "vRP:Warning_records", function(content)
+          vRPclient.setDiv(player,{"police_pc",".div_police_pc{ background-color: rgba(0,0,0,0.75); color: white; font-weight: bold; width: 500px; padding: 10px; margin: auto; margin-top: 150px; }",content})
+        end)
+      else
+        vRPclient.notify(player,{lang.common.not_found()})
+      end
+    end)
+  --end)
+end
+
 -- close business of an arrested owner
 local function ch_closebusiness(player,choice)
   vRPclient.getNearestPlayer(player,{5},function(nplayer)
@@ -183,6 +214,8 @@ menu_pc[lang.police.pc.trackveh.title()] = {ch_trackveh,lang.police.pc.trackveh.
 menu_pc[lang.police.pc.records.show.title()] = {ch_show_police_records,lang.police.pc.records.show.description()}
 menu_pc[lang.police.pc.records.delete.title()] = {ch_delete_police_records, lang.police.pc.records.delete.description()}
 menu_pc[lang.police.pc.closebusiness.title()] = {ch_closebusiness,lang.police.pc.closebusiness.description()}
+menu_pc["Search Warnings"] = {ch_show_Warning_records,"Search for warnings by Registration NR."}
+menu_pc["Search Warnings by ID"] = {ch_show_Warning_recordsID,"Search for warnings by ID"}
 
 menu_pc.onclose = function(player) -- close pc gui
   vRPclient.removeDiv(player,{"police_pc"})
