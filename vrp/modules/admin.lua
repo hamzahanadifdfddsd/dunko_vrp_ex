@@ -117,6 +117,23 @@ local function ch_removegroup(player,choice)
   end
 end
 
+local function ch_WarnPlayer(player,choice)
+  local user_id = vRP.getUserId(player)
+  if user_id ~= nil and vRP.hasPermission(user_id,"player.kick") then
+	vRP.prompt(player,"User id to Warn: ","",function(player,id)
+	id = parseInt(id)
+	  vRP.prompt(player,"Reason: ","",function(player,reason)
+        local source = vRP.getUserSource(id)
+        if source ~= nil then
+          vRP.WarnPlayer(player,source,reason)
+		else
+			vRPclient.notify(player,{"~r~No player id."})
+		end
+      end)
+    end)
+  end
+end
+
 local function ch_kick(player,choice)
   local user_id = vRP.getUserId(player)
   if user_id ~= nil and vRP.hasPermission(user_id,"player.kick") then
@@ -362,6 +379,9 @@ vRP.registerMenuBuilder("main", function(add, data)
         end
         if vRP.hasPermission(user_id,"player.unwhitelist") then
           menu["Un-whitelist user"] = {ch_unwhitelist}
+        end
+        if vRP.hasPermission(user_id,"player.warn") then
+          menu["Warn Player"] = {ch_WarnPlayer,"Warn a naughty player."}
         end
         if vRP.hasPermission(user_id,"player.kick") then
           menu["Kick"] = {ch_kick}
