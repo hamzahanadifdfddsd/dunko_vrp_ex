@@ -306,6 +306,48 @@ end
 function vRP.kick(source,reason)
   DropPlayer(source,reason)
 end
+function vRP.insertWarnRecord(user_id, line)
+  if user_id ~= nil then
+    vRP.getUData(user_id, "vRP:Warning_records", function(data)
+      local records = data..line.."<br />"
+      vRP.setUData(user_id, "vRP:Warning_records", records)
+    end)
+  end
+end
+
+function vRP.WarnPlayer(Mod,Player,Reason)
+  local Mod_id = vRP.getUserId(Mod)
+  local user_id = vRP.getUserId(Player)
+  local source = vRP.getUserSource(user_id)
+  local player = vRP.getUserSource(Mod_id)
+  vRP.getUData(user_id,"vRP:Warned",function(value)
+	local custom = value
+	if custom ~= nil and custom ~= "" then
+		local WarnedBefore = tonumber(custom)
+		WarnedNow = 1 + WarnedBefore
+	else
+		WarnedNow = 1
+	end
+	vRP.setUData(user_id, "vRP:Warned", WarnedNow)
+	vRPclient.notify(source,{"~r~You recieved a Admin Warning, you have ["..WarnedNow.."/6] Warning Points."})
+  local Line = "["..Mod_id.."]-["..Reason.."]"
+	vRP.insertWarnRecord(user_id, Line)
+	if WarnedNow > 2 then
+	   vRP.kick(source,"[System: Kick] You have ["..WarnedNow.."] Warning Point('s)")
+	   vRPclient.notify(player,{"kicked user "..user_id})
+	elseif WarnedNow > 3 then
+	   vRP.kick(source,"[System: Kick] You have ["..WarnedNow.."] Warning Point('s)")
+	   vRPclient.notify(player,{"kicked user "..user_id})
+	elseif WarnedNow > 4 then
+	   vRP.kick(source,"[System: Kick] You have ["..WarnedNow.."] Warning Point('s)")
+	   vRPclient.notify(player,{"kicked user "..user_id})
+	elseif WarnedNow > 5 then
+	   vRP.ban(source,"[System: Ban] You have ["..WarnedNow.."] Warning Point('s)")
+	   vRPclient.notify(player,{"Banned user "..user_id})
+	end	
+	vRPclient.notify(player,{"Warned user "..user_id})
+  end)
+end 
 
 -- tasks
 
